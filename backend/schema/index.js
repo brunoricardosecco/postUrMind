@@ -1,6 +1,6 @@
 const graphql = require('graphql');
 
-const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLSchema } = graphql;
+const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLSchema, GraphQLList } = graphql;
 
 const postsMock = [
   {
@@ -65,6 +65,13 @@ const AuthorType = new GraphQLObjectType({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
     email: { type: GraphQLString },
+    posts: {
+      type: new GraphQLList(PostType),
+      resolve(parent, args) {
+        const { id } = parent;
+        return postsMock.filter(post => post.authorId === id);
+      }
+    }
   }),
 });
 
@@ -87,7 +94,13 @@ const RootQuery = new GraphQLObjectType({
         const { id } = args;
         return authorsMock.find(author => author.id === id);
       }
-    }
+    },
+    posts: {
+      type: new GraphQLList(PostType),
+      resolve() {
+        return postsMock
+      }
+    },
   },
 });
 

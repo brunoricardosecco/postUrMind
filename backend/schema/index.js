@@ -101,6 +101,12 @@ const RootQuery = new GraphQLObjectType({
         return postsMock
       }
     },
+    authors: {
+      type: new GraphQLList(AuthorType),
+      resolve() {
+        return authorsMock
+      }
+    }
   },
 });
 

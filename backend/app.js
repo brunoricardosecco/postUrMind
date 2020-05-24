@@ -2,9 +2,13 @@ require('dotenv');
 
 const express = require('express');
 const graphqlHTTP = require('express-graphql');
-const schema = require('./schema/index');
+const schema = require('./database/schema/index');
+
+const { Author, Post } = require('./app/models');
 
 const app = express();
+
+app.use(express.json());
 
 app.use(
   '/graphql',

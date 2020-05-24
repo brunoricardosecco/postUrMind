@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, DataTypes) => {
-    return queryInterface.createTable('Users', {
+    return queryInterface.createTable('Authors', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -18,10 +18,6 @@ module.exports = {
         type: DataTypes.STRING,
         unique: true,
       },
-      password: {
-        allowNull: false,
-        type: DataTypes.STRING,
-      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
@@ -33,7 +29,7 @@ module.exports = {
     });
   },
 
-  down: (queryInterface) => {
-    return queryInterface.dropTable('Users');
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.dropTable('Authors');
   }
 };

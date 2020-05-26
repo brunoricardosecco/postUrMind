@@ -4,7 +4,7 @@ const express = require('express');
 const graphqlHTTP = require('express-graphql');
 const schema = require('./database/schema/index');
 
-const { Author, Post } = require('./app/models');
+const { Author, Post } = require('./app/models')
 
 const app = express();
 

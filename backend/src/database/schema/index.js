@@ -1,6 +1,7 @@
 const graphql = require('graphql');
+const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLSchema, GraphQLList, GraphQLInt } = graphql;
 
-const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLSchema, GraphQLList } = graphql;
+const { Author, Post } = require('../../app/models');
 
 const postsMock = [
   {
@@ -53,7 +54,7 @@ const PostType = new GraphQLObjectType({
       type: AuthorType,
       resolve(parent, args) {
         const { authorId } = parent;
-        return authorsMock.find(author => author.id === authorId);
+        //return authorsMock.find(author => author.id === authorId);
       }
     }
   }),
@@ -69,7 +70,7 @@ const AuthorType = new GraphQLObjectType({
       type: new GraphQLList(PostType),
       resolve(parent, args) {
         const { id } = parent;
-        return postsMock.filter(post => post.authorId === id);
+        //return postsMock.filter(post => post.authorId === id);
       }
     }
   }),
@@ -84,7 +85,7 @@ const RootQuery = new GraphQLObjectType({
       resolve(parent, args) {
         const { id } = args;
         //code to get data from db
-         return postsMock.find(post => post.id === id);
+         //return postsMock.find(post => post.id === id);
       },
     },
     author: {
@@ -92,24 +93,44 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
         const { id } = args;
-        return authorsMock.find(author => author.id === id);
+        //return authorsMock.find(author => author.id === id);
       }
     },
     posts: {
       type: new GraphQLList(PostType),
       resolve() {
-        return postsMock
+        //return postsMock
       }
     },
     authors: {
       type: new GraphQLList(AuthorType),
       resolve() {
-        return authorsMock
+        //return authorsMock
       }
     }
   },
 });
 
+const Mutation = new GraphQLObjectType({
+  name:'Mutation',
+  fields: {
+    addAuthor: {
+      type: AuthorType,
+      args: {
+        name: { type: GraphQLString },
+        email: { type: GraphQLString}
+      },
+      resolve(parent, args) {
+        return Author.create({
+          name: args.name,
+          email: args.email
+        }).then(response => new Author(response.dataValues));
+      }
+    },
+  }
+})
+
 module.exports = new GraphQLSchema({
   query: RootQuery,
+  mutation: Mutation
 });

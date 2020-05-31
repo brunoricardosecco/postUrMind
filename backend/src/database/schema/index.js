@@ -3,47 +3,6 @@ const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLSchema, GraphQLList,
 
 const { Author, Post } = require('../../app/models');
 
-const postsMock = [
-  {
-    id: "1",
-    title: 'Test 0',
-    message: 'Today I will go to the supermarket',
-    authorId: '1'
-  },
-  {
-    id: '2',
-    title: 'Test 1',
-    message: 'Today I will go to pay the bills',
-    authorId: '1'
-  },
-  {
-    id: '3',
-    title: 'Test 2',
-    message: 'Today is a pay day',
-    authorId: '2'
-  },
-];
-const authorsMock = [
-  {
-    id: "1",
-    name: 'Author 1',
-    email: 'author1@test.com',
-  },
-  {
-    id: "2",
-    name: 'Author 2',
-    email: 'author2@test.com',
-  },
-  {
-    id: "3",
-    name: 'Author 3',
-    email: 'author3@test.com',
-  },
-
-];
-
-
-
 const PostType = new GraphQLObjectType({
   name: 'Post',
   fields: () => ({
@@ -54,7 +13,8 @@ const PostType = new GraphQLObjectType({
       type: AuthorType,
       resolve(parent, args) {
         const { authorId } = parent;
-        //return authorsMock.find(author => author.id === authorId);
+
+        return Author.findByPk(authorId)
       }
     }
   }),
@@ -70,7 +30,12 @@ const AuthorType = new GraphQLObjectType({
       type: new GraphQLList(PostType),
       resolve(parent, args) {
         const { id } = parent;
-        //return postsMock.filter(post => post.authorId === id);
+
+        return Post.findAll({
+          where: {
+            authorId: id
+          }
+        })
       }
     }
   }),
@@ -84,8 +49,8 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
         const { id } = args;
-        //code to get data from db
-         //return postsMock.find(post => post.id === id);
+
+        return Post.findByPk(id)
       },
     },
     author: {
@@ -93,19 +58,19 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
         const { id } = args;
-        //return authorsMock.find(author => author.id === id);
+        return Author.findByPk(id)
       }
     },
     posts: {
       type: new GraphQLList(PostType),
       resolve() {
-        //return postsMock
+        return Post.findAll();
       }
     },
     authors: {
       type: new GraphQLList(AuthorType),
       resolve() {
-        //return authorsMock
+        return Author.findAll();
       }
     }
   },
@@ -124,7 +89,7 @@ const Mutation = new GraphQLObjectType({
         return Author.create({
           name: args.name,
           email: args.email
-        }).then(response => new Author(response.dataValues));
+        })
       }
     },
     addPost: {
@@ -139,7 +104,7 @@ const Mutation = new GraphQLObjectType({
           title: args.title,
           message: args.message,
           authorId: args.authorId
-        }).then(response => new Post(response.dataValues));
+        })
       }
     }
   }

@@ -1,5 +1,5 @@
 const graphql = require('graphql');
-const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLSchema, GraphQLList, GraphQLInt } = graphql;
+const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLSchema, GraphQLList, GraphQLNonNull } = graphql;
 
 const { Author, Post } = require('../../app/models');
 
@@ -82,8 +82,8 @@ const Mutation = new GraphQLObjectType({
     addAuthor: {
       type: AuthorType,
       args: {
-        name: { type: GraphQLString },
-        email: { type: GraphQLString}
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve(parent, args) {
         return Author.create({
@@ -95,9 +95,9 @@ const Mutation = new GraphQLObjectType({
     addPost: {
       type: PostType,
       args: {
-        title: { type: GraphQLString},
-        message: { type: GraphQLString},
-        authorId: { type: GraphQLID}
+        title: { type: new GraphQLNonNull(GraphQLString)},
+        message: { type: new GraphQLNonNull(GraphQLString)},
+        authorId: { type: new GraphQLNonNull(GraphQLID)}
       },
       resolve(parent, args) {
         return Post.create({
